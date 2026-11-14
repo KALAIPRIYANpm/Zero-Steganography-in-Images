@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* --- Hero Section with Static Image --- */
+    .hero-section {
+        position: relative;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        /* UPDATED: High-Res Background Image */
+        background: url('https://humanfocus.co.uk/wp-content/uploads/what-is-cyber-security.jpg') no-repeat center center/cover;
+    }
+
+    /* --- Dark Overlay for Readability --- */
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* Gradient: Darker at bottom/top, slightly transparent in center */
+        background: linear-gradient(180deg, 
+            rgba(5, 10, 16, 0.9) 0%, 
+            rgba(5, 10, 16, 0.6) 50%, 
+            rgba(5, 10, 16, 1) 100%);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        max-width: 900px;
+        padding: 20px;
+        margin-top: -50px;
+    }
+
+    /* --- Glitch Typography --- */
+    .glitch-wrapper {
+        display: inline-block;
+        position: relative;
+    }
+
+    .glitch-text {
+        font-size: 5rem;
+        font-weight: 700;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 8px;
+        position: relative;
+        /* Stronger shadow to pop against image */
+        text-shadow: 0 0 30px rgba(0, 242, 255, 0.9); 
+        animation: glowPulse 3s infinite alternate;
+    }
+
+    .hero-subtext {
+        font-size: 1.4rem;
+        color: #d0dce7;
+        margin: 20px 0 50px;
+        font-family: 'Roboto Mono', monospace;
+        border-right: 2px solid var(--primary-color);
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        max-width: 100%;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.8); /* Shadow for readability */
+        background: rgba(0,0,0,0.3); /* Subtle backing */
+        padding: 5px 10px;
+    }
+
+    /* --- Action Buttons --- */
+    .btn-hero {
+        padding: 18px 45px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        background: rgba(5, 10, 16, 0.7); 
+        backdrop-filter: blur(5px);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: inline-flex;
+        align-items: center;
+        margin: 10px;
+        text-decoration: none;
+        clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+    }
+
+    .btn-hero i { margin-right: 10px; }
+
+    .btn-hero:hover {
+        background: var(--primary-color);
+        color: #000;
+        box-shadow: 0 0 40px rgba(0, 242, 255, 0.6);
+        transform: translateY(-5px);
+    }
+
+    .btn-hero.secondary {
+        border-color: var(--secondary-color);
+        color: var(--secondary-color);
+        background: rgba(5, 10, 16, 0.7);
+    }
+
+    .btn-hero.secondary:hover {
+        background: var(--secondary-color);
+        color: white;
+        box-shadow: 0 0 40px rgba(112, 0, 255, 0.6);
+    }
+
+    /* --- Features Section --- */
+    .features-section {
+        background: #050a10;
+        padding: 100px 0;
+        position: relative;
+        z-index: 2;
+        border-top: 1px solid rgba(0, 242, 255, 0.2);
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 40px 30px;
+        text-align: center;
+        transition: 0.4s;
+        height: 100%;
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 4px; height: 100%;
+        background: var(--primary-color);
+        opacity: 0;
+        transition: 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-15px);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .feature-card:hover::before { opacity: 1; }
+
+    .icon-box {
+        font-size: 3.5rem;
+        margin-bottom: 30px;
+        background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+        filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
+    }
+
+    .feature-title {
+        color: white;
+        font-size: 1.6rem;
+        margin-bottom: 15px;
+        font-weight: 600;
+        font-family: 'Rajdhani', sans-serif;
+    }
+
+    .feature-desc {
+        color: #b0c4de;
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    /* --- Animations --- */
+    @keyframes glowPulse {
+        from { text-shadow: 0 0 10px rgba(0, 242, 255, 0.4); }
+        to { text-shadow: 0 0 30px rgba(0, 242, 255, 1), 0 0 10px white; }
+    }
+
+    @keyframes typing {
+        from { width: 0 }
+        to { width: 100% }
+    }
+    
+    @keyframes blink-caret {
+        from, to { border-color: transparent }
+        50% { border-color: var(--primary-color) }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .glitch-text { font-size: 3rem; letter-spacing: 4px; }
+        .hero-subtext { font-size: 1rem; white-space: normal; border: none; animation: none; }
+        .btn-hero { width: 100%; justify-content: center; margin: 10px 0; }
+    }
+</style>
+
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+        <div class="glitch-wrapper">
+            <h1 class="glitch-text">SECURE BINARY</h1>
+        </div>
+        
+        <p class="hero-subtext">Converting Data into the Building Blocks of Life.</p>
+        
+        <div class="d-flex justify-content-center flex-wrap mt-4 gap-3">
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard') }}" class="btn-hero">
+                    <i class="fa-solid fa-chart-line"></i> User Dashboard
+                </a>
+                <a href="{{ url_for('send_message') }}" class="btn-hero secondary">
+                    <i class="fa-solid fa-paper-plane"></i> Send Data
+                </a>
+            {% elif session.get('admin_id') %}
+                <a href="{{ url_for('admin_dashboard') }}" class="btn-hero secondary">
+                    <i class="fa-solid fa-shield-cat"></i> Admin Panel
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn-hero">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </a>
+                <a href="{{ url_for('register') }}" class="btn-hero secondary">
+                    <i class="fa-solid fa-user-plus"></i> Register
+                </a>
+                <a href="{{ url_for('admin_login') }}" class="btn-hero" style="border-color: #ff3333; color: #ff3333;">
+                    <i class="fa-solid fa-lock"></i> Admin
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h6 class="text-uppercase" style="color: var(--primary-color); letter-spacing: 3px; font-weight: bold;">System Capabilities</h6>
+                <h2 class="text-white fw-bold display-5">Why DNA Cryptography?</h2>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-dna"></i>
+                    </div>
+                    <h3 class="feature-title">Genetic Encoding</h3>
+                    <p class="feature-desc">
+                        We transform binary data (0s and 1s) into synthetic DNA sequences (A, T, G, C), creating a biologically-inspired layer of obfuscation that baffles traditional sniffers.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-image"></i>
+                    </div>
+                    <h3 class="feature-title">Zero Steganography</h3>
+                    <p class="feature-desc">
+                        Unlike traditional methods that hide data <i>inside</i> images, we treat the image itself as the message. We convert the raw binary of the file directly into DNA strands.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="feature-title">Two-Factor Decryption</h3>
+                    <p class="feature-desc">
+                        Security is paramount. Decryption requires both the correct user session and a unique 8-character key sent via a separate channel (Email), ensuring military-grade protection.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* --- Background & Layout --- */
+    .register-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        position: relative;
+        /* Cyberpunk City Background */
+        background: linear-gradient(135deg, rgba(5, 10, 16, 0.9), rgba(5, 10, 16, 0.85)), 
+                    url('https://images.unsplash.com/photo-1515630278258-407f66498911?q=80&w=2069&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    /* --- Glassmorphism Card --- */
+    .register-card {
+        background: rgba(16, 26, 41, 0.75);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 600px; /* Wider for 2-column layout */
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        position: relative;
+        z-index: 2;
+    }
+
+    .register-card::before {
+        content: '';
+        position: absolute;
+        top: -2px; left: -2px; right: -2px; bottom: -2px;
+        background: linear-gradient(45deg, #00f2ff, transparent, #7000ff);
+        z-index: -1;
+        border-radius: 22px;
+        opacity: 0.5;
+        filter: blur(10px);
+    }
+
+    /* --- Typography --- */
+    .register-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .register-header h2 {
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        text-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
+    }
+
+    .register-header p {
+        color: #a0aab5;
+        font-size: 0.9rem;
+        font-family: 'Roboto Mono', monospace;
+    }
+
+    /* --- Input Fields --- */
+    .input-group-custom {
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    .form-control {
+        background: rgba(5, 10, 16, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        height: 50px;
+        padding-left: 45px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus {
+        background: rgba(5, 10, 16, 0.9);
+        border-color: #00f2ff;
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        color: #fff;
+    }
+
+    .form-icon {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        color: #6c757d;
+        font-size: 1.1rem;
+        transition: color 0.3s;
+        z-index: 4;
+    }
+
+    .form-control:focus + .form-icon { color: #00f2ff; }
+
+    /* Label Animation */
+    .floating-label {
+        position: absolute;
+        left: 45px;
+        top: 13px;
+        color: #6c757d;
+        pointer-events: none;
+        transition: 0.3s ease all;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus ~ .floating-label,
+    .form-control:not(:placeholder-shown) ~ .floating-label {
+        top: -22px;
+        left: 0;
+        font-size: 0.8rem;
+        color: #00f2ff;
+        font-weight: 600;
+    }
+
+    /* --- Button --- */
+    .btn-register {
+        background: linear-gradient(90deg, #00f2ff, #0072ff);
+        color: white;
+        font-weight: 700;
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 8px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 10px;
+        position: relative;
+        overflow: hidden;
+        transition: 0.3s;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 242, 255, 0.3);
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .login-link a {
+        color: #00f2ff;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    
+    .login-link a:hover {
+        text-shadow: 0 0 10px rgba(0, 242, 255, 0.8);
+    }
+</style>
+
+<section class="register-section">
+    <div class="register-card">
+        <div class="register-header">
+            <i class="fa-solid fa-user-plus fa-3x mb-3" style="color: #00f2ff;"></i>
+            <h2>Initialize Identity</h2>
+            <p>Join the Secure DNA Network</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="input-group-custom">
+                        <input type="text" name="full_name" class="form-control" placeholder=" " required>
+                        <i class="fa-solid fa-id-card form-icon"></i>
+                        <label class="floating-label">Full Name</label>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="input-group-custom">
+                        <input type="number" name="age" class="form-control" placeholder=" " required min="18" max="120">
+                        <i class="fa-solid fa-hourglass-half form-icon"></i>
+                        <label class="floating-label">Age</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group-custom">
+                        <input type="email" name="email" class="form-control" placeholder=" " required>
+                        <i class="fa-solid fa-envelope form-icon"></i>
+                        <label class="floating-label">Email Address</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="input-group-custom">
+                        <input type="tel" name="phone" class="form-control" placeholder=" " required pattern="[0-9]{10}">
+                        <i class="fa-solid fa-phone form-icon"></i>
+                        <label class="floating-label">Phone Number</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group-custom">
+                        <input type="text" name="username" class="form-control" placeholder=" " required autocomplete="off">
+                        <i class="fa-solid fa-user-tag form-icon"></i>
+                        <label class="floating-label">Username</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="input-group-custom">
+                        <input type="password" name="password" class="form-control" placeholder=" " required>
+                        <i class="fa-solid fa-lock form-icon"></i>
+                        <label class="floating-label">Password</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-register">
+                Create Secure Account <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+        </form>
+
+        <div class="login-link">
+            <p class="mb-0 text-muted">Already have a secure ID?</p>
+            <a href="{{ url_for('login') }}">Access Login Portal</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

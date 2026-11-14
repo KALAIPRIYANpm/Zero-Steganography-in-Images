@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .messages-section {
+        min-height: 100vh;
+        background: #f5f6fa;
+        padding: 80px 20px 40px;
+    }
+
+    .page-header {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-header h1 {
+        color: #333;
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .btn-back {
+        padding: 10px 20px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+    }
+
+    .messages-table-container {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow-x: auto;
+    }
+
+    .messages-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .messages-table thead {
+        background: #f8f9fa;
+    }
+
+    .messages-table th {
+        padding: 15px;
+        text-align: left;
+        color: #333;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .messages-table td {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .messages-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .status-encrypted {
+        background: #cfe2ff;
+        color: #084298;
+    }
+
+    .status-decrypted {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        color: #ddd;
+    }
+</style>
+
+<section class="messages-section">
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fa-solid fa-envelope"></i> All Messages</h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div class="messages-table-container">
+            {% if messages %}
+            <table class="messages-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>From → To</th>
+                        <th>Filename</th>
+                        <th>Size</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in messages %}
+                    <tr>
+                        <td>#{{ msg.id }}</td>
+                        <td>
+                            <strong>{{ msg.sender_name }}</strong> (@{{ msg.sender_username }})<br>
+                            <small style="color: #999;">→</small><br>
+                            <strong>{{ msg.receiver_name }}</strong> (@{{ msg.receiver_username }})
+                        </td>
+                        <td>{{ msg.original_filename }}</td>
+                        <td>{{ (msg.file_size / 1024)|round(2) }} KB</td>
+                        <td>
+                            {{ msg.timestamp | strftime('%b %d, %Y') }}<br>
+                            <small>{{ msg.timestamp | strftime('%I:%M %p') }}</small>
+                        </td>
+                        <td>
+                            <span class="status-badge {% if msg.is_decrypted %}status-decrypted{% else %}status-encrypted{% endif %}">
+                                {% if msg.is_decrypted %}Decrypted{% else %}Encrypted{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fa-solid fa-envelope"></i>
+                <h3>No Messages Found</h3>
+                <p>No encrypted messages have been sent in the system yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

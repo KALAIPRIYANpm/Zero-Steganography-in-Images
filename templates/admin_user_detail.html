@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .user-detail-section {
+        min-height: 100vh;
+        background: #f5f6fa;
+        padding: 80px 20px 40px;
+    }
+
+    .page-header {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .page-header h1 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .breadcrumb {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .breadcrumb a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .user-info-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+
+    .user-info-card h2 {
+        color: #333;
+        font-size: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .info-item {
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .info-label {
+        color: #666;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        color: #333;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .section-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+
+    .section-card h3 {
+        color: #333;
+        font-size: 18px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .simple-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .simple-table thead {
+        background: #f8f9fa;
+    }
+
+    .simple-table th {
+        padding: 12px;
+        text-align: left;
+        color: #333;
+        font-size: 13px;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .simple-table td {
+        padding: 12px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .simple-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-encrypted {
+        background: #cfe2ff;
+        color: #084298;
+    }
+
+    .badge-decrypted {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+    }
+
+    .btn-back {
+        padding: 10px 20px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+    }
+</style>
+
+<section class="user-detail-section">
+    <div class="container">
+        <a href="{{ url_for('admin_users') }}" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Back to Users
+        </a>
+
+        <div class="page-header">
+            <h1><i class="fa-solid fa-user"></i> User Details</h1>
+            <div class="breadcrumb">
+                <a href="{{ url_for('admin_dashboard') }}">Dashboard</a> / 
+                <a href="{{ url_for('admin_users') }}">Users</a> / 
+                {{ user.username }}
+            </div>
+        </div>
+
+        <!-- User Information -->
+        <div class="user-info-card">
+            <h2>Personal Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">{{ user.full_name }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Username</div>
+                    <div class="info-value">@{{ user.username }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ user.email }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Phone</div>
+                    <div class="info-value">{{ user.phone }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Age</div>
+                    <div class="info-value">{{ user.age }} years</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Account Status</div>
+                    <div class="info-value">
+                        {% if user.is_active %}
+                            <span style="color: #28a745;">✓ Active</span>
+                        {% else %}
+                            <span style="color: #dc3545;">✗ Inactive</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Joined Date</div>
+                    <div class="info-value">{{ user.created_at | strftime('%b %d, %Y') }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Last Login</div>
+                    <div class="info-value">
+                        {% if user.last_login %}
+                            {{ user.last_login | strftime('%b %d, %Y') }}
+                        {% else %}
+                            Never
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sent Messages -->
+        <div class="section-card">
+            <h3><i class="fa-solid fa-paper-plane"></i> Sent Messages ({{ sent_messages|length }})</h3>
+            {% if sent_messages %}
+            <table class="simple-table">
+                <thead>
+                    <tr>
+                        <th>To</th>
+                        <th>Filename</th>
+                        <th>Size</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in sent_messages %}
+                    <tr>
+                        <td>{{ msg.receiver_name }}</td>
+                        <td>{{ msg.original_filename }}</td>
+                        <td>{{ (msg.file_size / 1024)|round(2) }} KB</td>
+                        <td>{{ msg.timestamp | strftime('%b %d, %Y') }}</td>
+                        <td>
+                            <span class="status-badge {% if msg.is_decrypted %}badge-decrypted{% else %}badge-encrypted{% endif %}">
+                                {% if msg.is_decrypted %}Decrypted{% else %}Pending{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <p>No messages sent yet</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Received Messages -->
+        <div class="section-card">
+            <h3><i class="fa-solid fa-inbox"></i> Received Messages ({{ received_messages|length }})</h3>
+            {% if received_messages %}
+            <table class="simple-table">
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>Filename</th>
+                        <th>Size</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in received_messages %}
+                    <tr>
+                        <td>{{ msg.sender_name }}</td>
+                        <td>{{ msg.original_filename }}</td>
+                        <td>{{ (msg.file_size / 1024)|round(2) }} KB</td>
+                        <td>{{ msg.timestamp | strftime('%b %d, %Y') }}</td>
+                        <td>
+                            <span class="status-badge {% if msg.is_decrypted %}badge-decrypted{% else %}badge-encrypted{% endif %}">
+                                {% if msg.is_decrypted %}Decrypted{% else %}Encrypted{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <p>No messages received yet</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Wrong Attempts -->
+        <div class="section-card">
+            <h3><i class="fa-solid fa-exclamation-triangle"></i> Wrong Decryption Attempts ({{ wrong_attempts|length if wrong_attempts else 0 }})</h3>
+            {% if wrong_attempts %}
+            <table class="simple-table">
+                <thead>
+                    <tr>
+                        <th>Message From</th>
+                        <th>Filename</th>
+                        <th>Attempted Key</th>
+                        <th>IP Address</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attempt in wrong_attempts %}
+                    <tr>
+                        <td>{{ attempt.sender_username }}</td>
+                        <td>{{ attempt.original_filename }}</td>
+                        <td><code>{{ attempt.attempted_key }}</code></td>
+                        <td><code>{{ attempt.ip_address }}</code></td>
+                        <td>{{ attempt.attempt_time | strftime('%b %d, %Y %I:%M %p') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state" style="color: #28a745;">
+                <i class="fa-solid fa-shield-check" style="color: #28a745; font-size: 48px; margin-bottom: 10px;"></i>
+                <p>No wrong attempts recorded for this user</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

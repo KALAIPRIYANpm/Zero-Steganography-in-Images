@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .attackers-section {
+        min-height: 100vh;
+        background: #f5f6fa;
+        padding: 80px 20px 40px;
+    }
+
+    .page-header {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-header h1 {
+        color: #333;
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .page-header .badge {
+        padding: 8px 16px;
+        background: #dc3545;
+        color: white;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .btn-back {
+        padding: 10px 20px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+    }
+
+    .attempts-table-container {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow-x: auto;
+    }
+
+    .filter-info {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        color: #856404;
+    }
+
+    .filter-info i {
+        margin-right: 8px;
+    }
+
+    .attempts-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .attempts-table thead {
+        background: #f8f9fa;
+    }
+
+    .attempts-table th {
+        padding: 15px;
+        text-align: left;
+        color: #333;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .attempts-table td {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .attempts-table tbody tr:hover {
+        background: #fff8f8;
+    }
+
+    .attacker-info strong {
+        color: #dc3545;
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .ip-badge {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        display: inline-block;
+    }
+
+    .key-attempted {
+        background: #343a40;
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        letter-spacing: 2px;
+    }
+
+    .message-info {
+        font-size: 13px;
+    }
+
+    .message-info strong {
+        color: #333;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        color: #28a745;
+    }
+
+    .empty-state h3 {
+        color: #28a745;
+    }
+</style>
+
+<section class="attackers-section">
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1><i class="fa-solid fa-shield-exclamation"></i> Wrong Decryption Attempts</h1>
+                <span class="badge">{{ attempts|length }} Total Attempts</span>
+            </div>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div class="attempts-table-container">
+            <div class="filter-info">
+                <i class="fa-solid fa-info-circle"></i>
+                <strong>Security Information:</strong> This page shows all failed decryption attempts. 
+                Each entry includes the user who made the attempt, their IP address, the key they tried, and when the attempt occurred.
+            </div>
+
+            {% if attempts %}
+            <table class="attempts-table">
+                <thead>
+                    <tr>
+                        <th>Attacker Details</th>
+                        <th>IP Address</th>
+                        <th>Target Message</th>
+                        <th>Attempted Key</th>
+                        <th>Date & Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attempt in attempts %}
+                    <tr>
+                        <td>
+                            <div class="attacker-info">
+                                <strong>{{ attempt.full_name }}</strong>
+                                <small>@{{ attempt.username }}</small><br>
+                                <small style="color: #999;">{{ attempt.email }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="ip-badge">{{ attempt.ip_address }}</span>
+                        </td>
+                        <td>
+                            <div class="message-info">
+                                <strong>Message #{{ attempt.message_id }}</strong><br>
+                                File: {{ attempt.original_filename }}<br>
+                                <small>From: {{ attempt.sender_name }} (@{{ attempt.sender_username }})</small>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="key-attempted">{{ attempt.attempted_key }}</span>
+                        </td>
+                        <td>
+                            {{ attempt.attempt_time | strftime('%b %d, %Y') }}<br>
+                            <small>{{ attempt.attempt_time | strftime('%I:%M %p') }}</small>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fa-solid fa-shield-check"></i>
+                <h3>No Wrong Attempts Found</h3>
+                <p>Great news! No failed decryption attempts have been recorded yet.</p>
+                <p style="color: #28a745;">System is secure ✓</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
